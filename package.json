@@ -1,0 +1,20 @@
+{
+  "name": "wuzhong-tobacco-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "吴中零售客户营销服务 - 面向持证卷烟零售客户的业务通知与信息查询工具",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "import-data": "node scripts/import-excel.js",
+    "generate-template": "node scripts/generate-template.js"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
