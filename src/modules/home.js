@@ -4,7 +4,7 @@
 
 import { getToday, formatDate } from '../utils.js'
 import { navigate } from '../router.js'
-import { getSettings, getHomeNotices, hasActiveEmergencyOrders } from '../data-service.js'
+import { getSettings, getHomeNotices } from '../data-service.js'
 
 /**
  * 渲染首页
@@ -14,7 +14,7 @@ export function renderHome(data) {
   const app = document.getElementById('app')
   const settings = getSettings()
   const notices = getHomeNotices()
-  const hasEmergency = hasActiveEmergencyOrders()
+  const hasEmergencyOrders = data.emergencyOrders && data.emergencyOrders.length > 0
 
   const today = getToday()
   const updateTime = settings['数据更新时间'] || today
@@ -69,8 +69,8 @@ export function renderHome(data) {
         `}
       </div>
 
-      <!-- 应急订单通知（仅在有进行中订单时显示） -->
-      ${hasEmergency ? `
+      <!-- 应急订单通知（仅在 Excel 中有数据时显示） -->
+      ${hasEmergencyOrders ? `
         <div class="card" onclick="navigate('emergency')" style="cursor: pointer; border-left: 4px solid var(--color-accent);">
           <div style="display: flex; align-items: center; gap: 12px;">
             <span style="font-size: 28px;">⚡</span>
@@ -101,10 +101,12 @@ export function renderHome(data) {
           <div class="entry-icon">📋</div>
           <div class="entry-label">分档解读</div>
         </div>
+        ${hasEmergencyOrders ? `
         <div class="entry-card" onclick="navigate('emergency')">
           <div class="entry-icon">⚡</div>
           <div class="entry-label">应急订单</div>
         </div>
+        ` : ''}
         <div class="entry-card" onclick="navigate('broadcast')">
           <div class="entry-icon">📺</div>
           <div class="entry-label">直播专区</div>
