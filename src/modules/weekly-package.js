@@ -75,7 +75,7 @@ function renderPackageContent(app, tiers) {
                 font-weight: 600;
                 color: #333;
                 border-bottom: 1px solid #ddd;
-              ">${escapeHtml(group)}</div>
+              ">${group.startsWith('组') ? '江苏中烟 · ' : ''}${escapeHtml(group)}</div>
               <div style="padding: 8px 14px 12px;">
                 ${items.map(p => {
                   const isAct = p.类型 === '活动品规'
