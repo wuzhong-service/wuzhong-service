@@ -1,7 +1,7 @@
 /**
  * 标签活动模块
- * 每个组（组1~组5）作为独立活动，从上到下展示
- * 每个活动内分 活动品规（蓝底）和 激励品规（白底）
+ * 客户选择档位 → 显示对应品规和数量
+ * 按品牌组展示，简洁清晰
  */
 
 import { escapeHtml } from '../utils.js'
@@ -22,7 +22,7 @@ export function renderPackage(data) {
 function renderPackageContent(app, tiers) {
   const products = getPackagesByTier(selectedTier)
 
-  // 按 品牌组 分组（每个组是一个独立活动）
+  // 按品牌组分组
   const groupOrder = ['组1', '组2', '组3', '组4', '组5', '上烟集团', '云南中烟', '福建中烟']
   const groups = [...new Set(products.map(p => p.品牌组).filter(Boolean))]
   groups.sort((a, b) => {
@@ -60,88 +60,47 @@ function renderPackageContent(app, tiers) {
         <div style="font-size: 13px; color: #999; margin: 8px 0;">共 ${products.length} 个品规</div>
 
         ${groups.map(group => {
-          const groupProducts = products.filter(p => p.品牌组 === group)
-          const activityItems = groupProducts.filter(p => p.类型 === '活动品规')
-          const incentiveItems = groupProducts.filter(p => p.类型 !== '活动品规')
-          const isActivityGroup = group.startsWith('组')
-
+          const items = products.filter(p => p.品牌组 === group)
+          const isGroup = group.startsWith('组')
           return `
             <div style="
               background: #fff;
               border-radius: 12px;
-              margin-bottom: 14px;
+              margin-bottom: 12px;
               box-shadow: var(--shadow);
               overflow: hidden;
-              border: 1px solid ${isActivityGroup ? '#d6eaf8' : '#eee'};
+              border: 1px solid ${isGroup ? '#d6eaf8' : '#eee'};
             ">
-              <!-- 活动标题 -->
               <div style="
-                padding: 12px 14px;
-                background: ${isActivityGroup ? 'linear-gradient(135deg, #e8f4f8, #d6eaf8)' : '#f9f9f9'};
-                font-size: 16px;
+                padding: 10px 14px;
+                background: ${isGroup ? '#e8f4f8' : '#f9f9f9'};
+                font-size: 15px;
                 font-weight: 600;
-                color: ${isActivityGroup ? '#1a5276' : '#666'};
-                border-bottom: 1px solid ${isActivityGroup ? '#c5e1f0' : '#eee'};
-              ">
-                ${isActivityGroup ? '🏷️ ' : '🎯 '}${escapeHtml(group)}
-              </div>
-
-              <!-- 活动品规 -->
-              ${activityItems.length > 0 ? `
-                <div style="padding: 8px 14px 4px;">
-                  <div style="font-size: 12px; font-weight: 600; color: #2980b9; margin-bottom: 4px;">活动品规：</div>
-                  ${activityItems.map(p => `
+                color: ${isGroup ? '#1a5276' : '#666'};
+                border-bottom: 1px solid ${isGroup ? '#d6eaf8' : '#eee'};
+              ">${isGroup ? '🏷️ ' : ''}${escapeHtml(group)}</div>
+              <div style="padding: 4px 14px 10px;">
+                ${items.map(p => `
+                  <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #f0f0f0;
+                    font-size: 14px;
+                  ">
+                    <div>${escapeHtml(p.品规名称)}</div>
                     <div style="
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      padding: 8px 10px;
-                      margin: 3px 0;
-                      border-radius: 8px;
                       background: #e8f4f8;
-                    ">
-                      <div style="font-size: 14px; font-weight: 500;">${escapeHtml(p.品规名称)}</div>
-                      <div style="
-                        background: rgba(41,128,185,0.15);
-                        padding: 3px 12px;
-                        border-radius: 20px;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #1a5276;
-                      ">${p.数量}条</div>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : ''}
-
-              <!-- 激励品规 -->
-              ${incentiveItems.length > 0 ? `
-                <div style="padding: 8px 14px 12px;">
-                  <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px;">激励品规：</div>
-                  ${incentiveItems.map(p => `
-                    <div style="
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      padding: 8px 10px;
-                      margin: 3px 0;
-                      border-radius: 8px;
-                      background: #fff;
-                      border: 1px solid #eee;
-                    ">
-                      <div style="font-size: 14px;">${escapeHtml(p.品规名称)}</div>
-                      <div style="
-                        background: #f0f0f0;
-                        padding: 3px 12px;
-                        border-radius: 20px;
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #555;
-                      ">${p.数量}条</div>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : ''}
+                      padding: 3px 12px;
+                      border-radius: 20px;
+                      font-size: 14px;
+                      font-weight: 600;
+                      color: #1a5276;
+                    ">${p.数量}条</div>
+                  </div>
+                `).join('')}
+              </div>
             </div>
           `
         }).join('')}
@@ -162,7 +121,7 @@ function renderPackageContent(app, tiers) {
       `}
 
       <div class="footer-notice">
-        <p>本页面展示内容为标签活动，具体以正式通知为准</p>
+        <p>具体活动内容以正式业务通知为准</p>
       </div>
     </div>
   `
