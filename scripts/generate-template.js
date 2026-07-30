@@ -77,13 +77,26 @@ function genCigarettes() {
   ]
 }
 
-/** 订货时间安排（原日程安排） */
+/** 订货时间安排：8月订货排期，周日~周四=批次1~5 */
 function genSchedules() {
-  return [
-    { 批次: '第30周', 订货日期: futureDate(1), 送货日期: futureDate(3), 备注: '演示数据' },
-    { 批次: '第30周', 订货日期: futureDate(2), 送货日期: futureDate(4), 备注: '演示数据' },
-    { 批次: '第31周', 订货日期: futureDate(8), 送货日期: futureDate(10), 备注: '演示数据' },
-  ]
+  const rows = []
+  // 2026年8月：1号周六，2号周日开始
+  for (let d = 2; d <= 31; d++) {
+    const date = new Date(2026, 7, d) // 7=August
+    const day = date.getDay() // 0=Sun, 1=Mon, ..., 6=Sat
+    if (day === 5 || day === 6) continue // 跳过周五周六
+
+    const batchNum = day + 1 // Sun=1, Mon=2, ..., Thu=5
+    const orderDate = `2026-08-${String(d).padStart(2, '0')}`
+
+    // 送货日期（订货后2天）
+    const delivery = new Date(date)
+    delivery.setDate(delivery.getDate() + 2)
+    const deliveryDate = `${delivery.getFullYear()}-${String(delivery.getMonth() + 1).padStart(2, '0')}-${String(delivery.getDate()).padStart(2, '0')}`
+
+    rows.push({ 批次: batchNum, 订货日期: orderDate, 送货日期: deliveryDate })
+  }
+  return rows
 }
 
 /** 直播信息 */
@@ -169,7 +182,7 @@ function addSheet(wb, name, data, colWidths) {
 addSheet(wb, '首页通知', genHomeNotices(), [8, 25, 35, 14, 6, 14])
 addSheet(wb, '套餐信息', genPackages(), [10, 6, 12, 22, 14, 14, 14, 14, 14, 14])
 addSheet(wb, '卷烟信息', genCigarettes(), [10, 22, 12, 14, 22, 20, 14])
-addSheet(wb, '日程安排', genSchedules(), [12, 14, 14, 30])
+addSheet(wb, '日程安排', genSchedules(), [8, 14, 14])
 addSheet(wb, '直播信息', genLiveBroadcasts(), [20, 25, 30, 10, 35, 20, 20, 10, 14])
 addSheet(wb, '制度解读', genClassifications(), [10, 20, 35, 50, 40, 14])
 addSheet(wb, '应急订单', genEmergencyOrders(), [30, 14, 20, 20, 14, 14, 40, 10, 14])
