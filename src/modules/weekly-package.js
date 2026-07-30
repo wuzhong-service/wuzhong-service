@@ -1,7 +1,6 @@
 /**
  * 标签活动模块
- * 根据Excel表格展示：活动品规（蓝底）、激励品规（白底）
- * 按品牌组分组展示
+ * 所有活动展示风格统一，每个品规标注活动品规/激励品规
  */
 
 import { escapeHtml } from '../utils.js'
@@ -60,7 +59,6 @@ function renderPackageContent(app, tiers) {
 
         ${groups.map(group => {
           const items = products.filter(p => p.品牌组 === group)
-          const isActivity = items.some(p => p.类型 === '活动品规')
           return `
             <div style="
               background: #fff;
@@ -68,18 +66,16 @@ function renderPackageContent(app, tiers) {
               margin-bottom: 12px;
               box-shadow: var(--shadow);
               overflow: hidden;
-              border: 1px solid ${isActivity ? '#b8dff0' : '#e0e0e0'};
+              border: 1px solid #e0e0e0;
             ">
               <div style="
                 padding: 10px 14px;
-                background: ${isActivity ? '#d4edf7' : '#f0f0f0'};
+                background: #f5f6fa;
                 font-size: 15px;
                 font-weight: 600;
-                color: ${isActivity ? '#0d4f7a' : '#555'};
-                border-bottom: 1px solid ${isActivity ? '#b8dff0' : '#e0e0e0'};
-              ">
-                ${isActivity ? '🏷️ ' : ''}${escapeHtml(group)}
-              </div>
+                color: var(--color-primary);
+                border-bottom: 1px solid #e0e0e0;
+              ">${escapeHtml(group)}</div>
               <div style="padding: 6px 14px 10px;">
                 ${items.map(p => {
                   const isAct = p.类型 === '活动品规'
@@ -94,16 +90,23 @@ function renderPackageContent(app, tiers) {
                       background: ${isAct ? '#e8f4f8' : '#fff'};
                       border: ${isAct ? 'none' : '1px solid #eee'};
                     ">
-                      <div style="font-size: 14px; font-weight: ${isAct ? '500' : 'normal'};
-                        color: ${isAct ? '#0d4f7a' : '#333'};
-                      ">${escapeHtml(p.品规名称)}</div>
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 14px; font-weight: 500; color: #333;">
+                          ${escapeHtml(p.品规名称)}
+                        </div>
+                        <div style="font-size: 11px; color: ${isAct ? '#2980b9' : '#999'}; margin-top: 2px;">
+                          ${isAct ? '活动品规' : '激励品规'}
+                        </div>
+                      </div>
                       <div style="
-                        background: ${isAct ? 'rgba(13,79,122,0.12)' : '#eee'};
+                        flex-shrink: 0;
+                        background: ${isAct ? 'rgba(41,128,185,0.15)' : '#eee'};
                         padding: 3px 12px;
                         border-radius: 20px;
                         font-size: 14px;
                         font-weight: 600;
-                        color: ${isAct ? '#0d4f7a' : '#555'};
+                        color: ${isAct ? '#1a5276' : '#555'};
+                        margin-left: 8px;
                       ">${p.数量}条</div>
                     </div>
                   `
