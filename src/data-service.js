@@ -12,7 +12,6 @@ let loadError = null
  * @returns {Promise<Object>}
  */
 export async function loadData() {
-  // 如果有缓存且没有错误，直接返回
   if (dataCache && !loadError) {
     return dataCache
   }
@@ -34,34 +33,20 @@ export async function loadData() {
   }
 }
 
-/**
- * 检查数据是否已加载
- * @returns {boolean}
- */
 export function isDataLoaded() {
   return dataCache !== null
 }
 
-/**
- * 获取加载错误信息
- * @returns {string|null}
- */
 export function getLoadError() {
   return loadError
 }
 
-/**
- * 清除缓存（强制重新加载）
- */
 export function clearCache() {
   dataCache = null
   loadError = null
 }
 
-/**
- * 获取基础设置
- * @returns {Object}
- */
+/** 获取基础设置 */
 export function getSettings() {
   if (!dataCache || !dataCache.settings) return {}
   const settings = {}
@@ -71,10 +56,7 @@ export function getSettings() {
   return settings
 }
 
-/**
- * 获取首页通知
- * @returns {Array}
- */
+/** 获取首页通知 */
 export function getHomeNotices() {
   if (!dataCache || !dataCache.homeNotices) return []
   return dataCache.homeNotices
@@ -82,39 +64,53 @@ export function getHomeNotices() {
     .sort((a, b) => (a.排序 || 0) - (b.排序 || 0))
 }
 
-/**
- * 获取套餐列表
- * @param {Object} filters
- * @returns {Array}
- */
-export function getPackages(filters = {}) {
-  if (!dataCache || !dataCache.packages) return []
-  let list = [...dataCache.packages]
-
-  if (filters.week) {
-    list = list.filter(item => String(item.周次) === String(filters.week))
-  }
-  if (filters.keyword) {
-    const kw = filters.keyword.toLowerCase()
-    list = list.filter(item =>
-      (item.套餐名称 || '').toLowerCase().includes(kw) ||
-      (item.适用档位 || '').includes(kw) ||
-      (item.包含品规 || '').includes(kw)
-    )
-  }
-
-  return list
+/** 获取档位列表 */
+export function getTierRanges() {
+  if (!dataCache || !dataCache.packages || dataCache.packages.length === 0) return []
+  const tiers = Object.keys(dataCache.packages[0]).filter(k => k.includes('档数量'))
+  return tiers.map(k => ({
+    key: k,
+    label: k.replace('数量', '')
+  }))
 }
 
 /**
- * 获取卷烟信息列表
- * @param {Object} filters
+ * 根据档位获取套餐品规
+ * @param {string} tierKey 档位列名，如 "30-28档数量"
  * @returns {Array}
  */
+export function getPackagesByTier(tierKey) {
+  if (!dataCache || !dataCache.packages) return []
+  if (!tierKey) return []
+
+  return dataCache.packages
+    .filter(item => {
+      const val = item[tierKey]
+      return val !== undefined && val !== null && val !== '' && Number(val) > 0
+    })
+    .map(item => ({
+      品牌组: item.品牌组 || '',
+      品牌: item.品牌 || '',
+      品规名称: item.品规名称 || '',
+      数量: item[tierKey],
+      更新时间: item.更新时间 || ''
+    }))
+}
+
+/** 获取所有品牌组列表（去重排序） */
+export function getBrandGroups() {
+  if (!dataCache || !dataCache.packages) return []
+  const groups = new Set()
+  dataCache.packages.forEach(item => {
+    if (item.品牌组) groups.add(item.品牌组)
+  })
+  return Array.from(groups)
+}
+
+/** 获取卷烟信息 */
 export function getCigarettes(filters = {}) {
   if (!dataCache || !dataCache.cigarettes) return []
   let list = [...dataCache.cigarettes]
-
   if (filters.brand) {
     list = list.filter(item => (item.品牌 || '') === filters.brand)
   }
@@ -125,14 +121,9 @@ export function getCigarettes(filters = {}) {
       (item.品规名称 || '').toLowerCase().includes(kw)
     )
   }
-
   return list
 }
 
-/**
- * 获取品牌列表（去重）
- * @returns {Array}
- */
 export function getBrandList() {
   if (!dataCache || !dataCache.cigarettes) return []
   const brands = new Set()
@@ -142,40 +133,22 @@ export function getBrandList() {
   return Array.from(brands).sort()
 }
 
-/**
- * 获取日程安排
- * @param {Object} filters
- * @returns {Array}
- */
-export function getSchedules(filters = {}) {
+/** 获取订货时间安排 */
+export function getScheduleList() {
   if (!dataCache || !dataCache.schedules) return []
-  let list = [...dataCache.schedules]
-
-  if (filters.type) {
-    list = list.filter(item => (item.事项类型 || '') === filters.type)
-  }
-
-  return list
+  return [...dataCache.schedules]
 }
 
-/**
- * 获取直播信息
- * @returns {Array}
- */
+/** 获取直播信息 */
 export function getLiveBroadcasts() {
   if (!dataCache || !dataCache.liveBroadcasts) return []
   return [...dataCache.liveBroadcasts]
 }
 
-/**
- * 获取制度解读
- * @param {Object} filters
- * @returns {Array}
- */
+/** 获取制度解读 */
 export function getClassifications(filters = {}) {
   if (!dataCache || !dataCache.classifications) return []
   let list = [...dataCache.classifications]
-
   if (filters.category) {
     list = list.filter(item => (item.分类 || '') === filters.category)
   }
@@ -187,15 +160,19 @@ export function getClassifications(filters = {}) {
       (item.详细内容 || '').includes(kw)
     )
   }
-
   return list
 }
 
-/**
- * 获取应急订单
- * @returns {Array}
- */
+/** 获取应急订单 */
 export function getEmergencyOrders() {
   if (!dataCache || !dataCache.emergencyOrders) return []
   return [...dataCache.emergencyOrders]
+}
+
+/** 检测是否有进行中的应急订单 */
+export function hasActiveEmergencyOrders() {
+  if (!dataCache || !dataCache.emergencyOrders) return false
+  return dataCache.emergencyOrders.some(o =>
+    o.当前状态 === '进行中' || o.当前状态 === '待开始'
+  )
 }
