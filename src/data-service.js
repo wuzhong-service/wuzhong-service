@@ -90,6 +90,7 @@ export function getPackagesByTier(tierKey) {
     })
     .map(item => ({
       品牌组: item.品牌组 || '',
+      类型: item.类型 || (String(item.品牌组 || '').startsWith('组') ? '活动品规' : '激励品规'),
       品牌: item.品牌 || '',
       品规名称: item.品规名称 || '',
       数量: item[tierKey],

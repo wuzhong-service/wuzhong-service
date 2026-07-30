@@ -87,7 +87,7 @@ export function renderHome(data) {
       <div class="grid-3" style="margin-top: 4px;">
         <div class="entry-card" onclick="navigate('package')">
           <div class="entry-icon">📦</div>
-          <div class="entry-label">本周套餐</div>
+          <div class="entry-label">标签活动</div>
         </div>
         <div class="entry-card" onclick="navigate('cigarette')">
           <div class="entry-icon">🚬</div>
