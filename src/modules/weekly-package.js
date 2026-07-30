@@ -1,6 +1,6 @@
 /**
  * 标签活动模块
- * 所有活动展示风格统一，每个品规标注活动品规/激励品规
+ * 所有活动风格统一，每个品规标注活动品规/激励品规，颜色区分
  */
 
 import { escapeHtml } from '../utils.js'
@@ -66,17 +66,17 @@ function renderPackageContent(app, tiers) {
               margin-bottom: 12px;
               box-shadow: var(--shadow);
               overflow: hidden;
-              border: 1px solid #e0e0e0;
+              border: 1px solid #ddd;
             ">
               <div style="
                 padding: 10px 14px;
-                background: #f5f6fa;
-                font-size: 15px;
+                background: #f5f5f5;
+                font-size: 16px;
                 font-weight: 600;
-                color: var(--color-primary);
-                border-bottom: 1px solid #e0e0e0;
+                color: #333;
+                border-bottom: 1px solid #ddd;
               ">${escapeHtml(group)}</div>
-              <div style="padding: 6px 14px 10px;">
+              <div style="padding: 8px 14px 12px;">
                 ${items.map(p => {
                   const isAct = p.类型 === '活动品规'
                   return `
@@ -84,28 +84,37 @@ function renderPackageContent(app, tiers) {
                       display: flex;
                       justify-content: space-between;
                       align-items: center;
-                      padding: 8px 10px;
-                      margin: 4px 0;
+                      padding: 10px 12px;
+                      margin: 5px 0;
                       border-radius: 8px;
-                      background: ${isAct ? '#e8f4f8' : '#fff'};
-                      border: ${isAct ? 'none' : '1px solid #eee'};
+                      background: ${isAct ? '#d4edda' : '#fff'};
+                      border: ${isAct ? 'none' : '1px solid #ddd'};
                     ">
                       <div style="flex: 1; min-width: 0;">
                         <div style="font-size: 14px; font-weight: 500; color: #333;">
                           ${escapeHtml(p.品规名称)}
                         </div>
-                        <div style="font-size: 11px; color: ${isAct ? '#2980b9' : '#999'}; margin-top: 2px;">
+                        <div style="
+                          display: inline-block;
+                          margin-top: 4px;
+                          padding: 1px 8px;
+                          border-radius: 10px;
+                          font-size: 11px;
+                          font-weight: 500;
+                          background: ${isAct ? '#c3e6cb' : '#e9ecef'};
+                          color: ${isAct ? '#155724' : '#495057'};
+                        ">
                           ${isAct ? '活动品规' : '激励品规'}
                         </div>
                       </div>
                       <div style="
                         flex-shrink: 0;
-                        background: ${isAct ? 'rgba(41,128,185,0.15)' : '#eee'};
-                        padding: 3px 12px;
+                        background: ${isAct ? '#c3e6cb' : '#e9ecef'};
+                        padding: 4px 14px;
                         border-radius: 20px;
-                        font-size: 14px;
+                        font-size: 15px;
                         font-weight: 600;
-                        color: ${isAct ? '#1a5276' : '#555'};
+                        color: ${isAct ? '#155724' : '#495057'};
                         margin-left: 8px;
                       ">${p.数量}条</div>
                     </div>
