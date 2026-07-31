@@ -30,9 +30,6 @@ export function renderBroadcast(data) {
     </div>
 
     <div class="page active">
-      <div class="notice-bar">
-        ⚠️ 以下内容仅为系统演示，不代表实际业务安排。
-      </div>
 
       ${sorted.length > 0 ? sorted.map(b => {
         const statusClass = b.状态 === '直播中' ? 'tag-live' :
@@ -47,7 +44,6 @@ export function renderBroadcast(data) {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <span class="tag ${statusClass}">${b.状态 || '未知'}</span>
               <span style="font-size: 12px; color: #999;">${b.更新时间 ? formatDate(b.更新时间) : ''}</span>
-            </div>
 
             <div class="live-time">📅 ${b.直播时间 || '时间待定'}</div>
             <div class="live-title">${escapeHtml(b.直播主题 || '未命名直播')}</div>

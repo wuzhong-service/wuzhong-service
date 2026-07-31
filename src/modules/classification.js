@@ -35,7 +35,7 @@ function renderClassificationContent(app, classifications, categories, filters) 
     <div class="page active">
       <!-- 提示 -->
       <div class="legal-notice">
-        ⚠️ 具体档位及评定结果以正式业务系统和最新通知为准。以下内容仅为系统演示。
+        ⚠️ 具体档位及评定结果以正式业务系统和最新通知为准
       </div>
 
       <!-- 搜索 -->

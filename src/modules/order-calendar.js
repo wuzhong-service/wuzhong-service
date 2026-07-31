@@ -30,9 +30,6 @@ function renderScheduleContent(app, schedules) {
     </div>
 
     <div class="page active">
-      <div class="notice-bar">
-        ⚠️ 以下内容仅为系统演示，不代表实际业务安排。
-      </div>
 
       <!-- 标题 -->
       <div style="
@@ -43,7 +40,6 @@ function renderScheduleContent(app, schedules) {
         padding: 16px 0 8px;
       ">
         8月订货安排
-      </div>
 
       <!-- 批次选择 -->
       <div class="card" style="padding: 16px;">

@@ -50,12 +50,6 @@ function renderPackageContent(app, tiers) {
         </div>
       ` : ''}
 
-      <div class="notice-bar">
-        ⚠️ 以下内容仅为系统演示，不代表实际业务安排。
-      </div>
-
-      <div class="card" style="padding: 14px;">
-        <div style="font-size: 15px; font-weight: 600; margin-bottom: 10px;">选择您的档位</div>
         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
           ${tiers.map(t => `
             <button class="btn ${selectedTier === t.key ? 'btn-primary' : 'btn-outline'}"

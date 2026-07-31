@@ -38,11 +38,6 @@ export function renderHome(data) {
         本页面仅面向持证卷烟零售客户提供业务信息查询和服务提醒，不面向消费者提供卷烟宣传、交易、预订或支付服务。具体业务安排以正式通知为准。
       </div>
 
-      <!-- 演示数据提示 -->
-      <div class="notice-bar">
-        ⚠️ 以下内容仅为系统演示，不代表实际业务安排。
-      </div>
-
       <!-- 本周重点提醒 -->
       <div class="card">
         <div class="card-title">📢 本周重点提醒</div>

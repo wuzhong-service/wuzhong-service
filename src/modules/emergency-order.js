@@ -33,14 +33,10 @@ export function renderEmergency(data) {
     </div>
 
     <div class="page active">
-      <div class="notice-bar">
-        ⚠️ 以下内容仅为系统演示，不代表实际业务安排。
-      </div>
 
       <!-- 重要提示 -->
       <div class="legal-notice" style="background: #fef9e7; border-left-color: var(--color-warning);">
         <strong>💡 温馨提示：</strong>请提前确认账户资金充足，以免影响订单兑付。具体安排以工业到货后及时通知为准，不对实际到货时间做不准确承诺。
-      </div>
 
       ${sorted.length > 0 ? sorted.map(order => {
         const statusTag = order.当前状态 === '进行中' ? 'tag-active' :

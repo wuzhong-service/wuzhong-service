@@ -35,7 +35,7 @@ function renderCigaretteContent(app, cigarettes, brands, filters) {
     <div class="page active">
       <!-- 价格提示 -->
       <div class="legal-notice">
-        ⚠️ 相关价格及信息以最新业务通知为准。以下内容仅为系统演示，不代表实际业务安排。
+        ⚠️ 相关价格及信息以最新业务通知为准
       </div>
 
       <!-- 搜索 -->
