@@ -4,7 +4,7 @@
  */
 
 import { escapeHtml } from '../utils.js'
-import { getTierRanges, getPackagesByTier } from '../data-service.js'
+import { getTierRanges, getPackagesByTier, getSettings } from '../data-service.js'
 import { navigate } from '../router.js'
 
 let selectedTier = ''
@@ -37,6 +37,19 @@ function renderPackageContent(app, tiers) {
     </div>
 
     <div class="page active">
+      <!-- 活动日期 -->
+      ${getSettings()['活动日期范围'] ? `
+        <div style="
+          text-align: center;
+          font-size: 20px;
+          font-weight: 600;
+          color: var(--color-primary);
+          padding: 14px 0 6px;
+        ">
+          ${getSettings()['活动日期范围']} 标签活动
+        </div>
+      ` : ''}
+
       <div class="notice-bar">
         ⚠️ 以下内容仅为系统演示，不代表实际业务安排。
       </div>
