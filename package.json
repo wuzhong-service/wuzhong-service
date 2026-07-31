@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "import-data": "node scripts/import-excel.js",
-    "generate-template": "node scripts/generate-template.js"
+    "generate-template": "node scripts/generate-template.js",
+    "sync": "npm run import-data && git add -A && git commit -m '更新数据' && git push"
   },
   "dependencies": {
     "xlsx": "^0.18.5"
