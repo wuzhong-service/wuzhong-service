@@ -199,12 +199,25 @@ function validateSheet(sheetName, rows, sheetIndex) {
 
     // 转换日期字段
     const convertedRow = {}
+    const tierMap = {} // 档位数量映射
+
     for (const [key, val] of Object.entries(row)) {
-      if (key.includes('日期') || key.includes('时间') || key.includes('更新') || key.includes('截止') || key.includes('开始') || key.includes('结束')) {
+      // 套餐信息：识别档位列（如 "30-28档数量"、"30档数量"），合并为 档位数量 映射
+      if (sheetName === '套餐信息' && /^\d+(-\d+)?档数量$/.test(key)) {
+        if (val !== undefined && val !== null && String(val).trim() !== '') {
+          const rangeKey = key.replace('档数量', '')
+          tierMap[rangeKey] = Number(String(val).replace(/[^0-9.]/g, '')) || 0
+        }
+      } else if (key.includes('日期') || key.includes('时间') || key.includes('更新') || key.includes('截止') || key.includes('开始') || key.includes('结束')) {
         convertedRow[key] = convertDate(val)
       } else {
         convertedRow[key] = val !== undefined && val !== null ? String(val).trim() : ''
       }
+    }
+
+    // 套餐信息：写入档位数量映射
+    if (sheetName === '套餐信息' && Object.keys(tierMap).length > 0) {
+      convertedRow['档位数量'] = tierMap
     }
 
     validRows.push(convertedRow)

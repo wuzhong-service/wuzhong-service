@@ -64,38 +64,56 @@ export function getHomeNotices() {
     .sort((a, b) => (a.排序 || 0) - (b.排序 || 0))
 }
 
-/** 获取档位列表 */
-export function getTierRanges() {
-  if (!dataCache || !dataCache.packages || dataCache.packages.length === 0) return []
-  const tiers = Object.keys(dataCache.packages[0]).filter(k => k.includes('档数量'))
-  return tiers.map(k => ({
-    key: k,
-    label: k.replace('数量', '')
-  }))
+/**
+ * 获取某个品规在指定档位的数量
+ * @param {Object} product 品规对象（含档位数量映射）
+ * @param {number} tier 档位 1-30
+ * @returns {number|null}
+ */
+export function getTierQuantity(product, tier) {
+  const map = product.档位数量 || {}
+  // 精确档位优先（如 "30"）
+  if (map[String(tier)] !== undefined && Number(map[String(tier)]) > 0) {
+    return map[String(tier)]
+  }
+  // 范围匹配（如 "30-28"）
+  for (const [key, val] of Object.entries(map)) {
+    const m = key.match(/^(\d+)-(\d+)$/)
+    if (m) {
+      const hi = Number(m[1])
+      const lo = Number(m[2])
+      if (tier >= lo && tier <= hi && Number(val) > 0) {
+        return val
+      }
+    }
+  }
+  return null
 }
 
 /**
- * 根据档位获取套餐品规
- * @param {string} tierKey 档位列名，如 "30-28档数量"
+ * 根据具体档位（1-30）获取可用品规
+ * @param {number} tier 档位
  * @returns {Array}
  */
-export function getPackagesByTier(tierKey) {
+export function getPackagesByTierNumber(tier) {
   if (!dataCache || !dataCache.packages) return []
-  if (!tierKey) return []
+  if (!tier || tier < 1 || tier > 30) return []
 
-  return dataCache.packages
-    .filter(item => {
-      const val = item[tierKey]
-      return val !== undefined && val !== null && val !== '' && Number(val) > 0
-    })
-    .map(item => ({
-      品牌组: item.品牌组 || '',
-      类型: item.类型 || (String(item.品牌组 || '').startsWith('组') ? '活动品规' : '激励品规'),
-      品牌: item.品牌 || '',
-      品规名称: item.品规名称 || '',
-      数量: item[tierKey],
-      更新时间: item.更新时间 || ''
-    }))
+  const result = []
+  for (const item of dataCache.packages) {
+    const qty = getTierQuantity(item, tier)
+    if (qty !== null) {
+      result.push({
+        品牌组: item.品牌组 || '',
+        类型: item.类型 || '激励品规',
+        品牌: item.品牌 || '',
+        品规名称: item.品规名称 || '',
+        数量: qty,
+        更新时间: item.更新时间 || ''
+      })
+    }
+  }
+  return result
 }
 
 /** 获取所有品牌组列表（去重排序） */

@@ -1,34 +1,48 @@
 /**
  * 标签活动模块
- * 所有活动风格统一，每个品规标注活动品规/激励品规，颜色区分
+ * 客户从1-30档中选择自己的档位，展示对应活动品规
+ * 显示"共X个活动"（按品牌组统计）
  */
 
 import { escapeHtml } from '../utils.js'
-import { getTierRanges, getPackagesByTier, getSettings } from '../data-service.js'
+import { getPackagesByTierNumber, getSettings } from '../data-service.js'
 import { navigate } from '../router.js'
 
 let selectedTier = ''
 
 export function renderPackage(data) {
   const app = document.getElementById('app')
-  const tiers = getTierRanges()
-  if (!selectedTier && tiers.length > 0) {
-    selectedTier = tiers[0].key
+  if (!selectedTier) {
+    selectedTier = '30'
   }
-  renderPackageContent(app, tiers)
+  renderPackageContent(app)
 }
 
-function renderPackageContent(app, tiers) {
-  const products = getPackagesByTier(selectedTier)
+function renderPackageContent(app) {
+  const products = getPackagesByTierNumber(Number(selectedTier))
 
-  // 按品牌组分组
-  const groupOrder = ['组1', '组2', '组3', '组4', '组5', '上烟集团', '云南中烟', '福建中烟']
-  const groups = [...new Set(products.map(p => p.品牌组).filter(Boolean))]
-  groups.sort((a, b) => {
-    const ia = groupOrder.indexOf(a)
-    const ib = groupOrder.indexOf(b)
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib)
-  })
+  // 统计活动数量（按品牌组去重）
+  const activityGroups = [...new Set(products.map(p => p.品牌组).filter(Boolean))]
+
+  // 按品牌组分组（保持数据顺序）
+  const groups = activityGroups
+
+  // 档位按钮：30到1
+  const tierButtons = []
+  for (let t = 30; t >= 1; t--) {
+    tierButtons.push(`
+      <button class="btn ${String(selectedTier) === String(t) ? 'btn-primary' : 'btn-outline'}"
+        onclick="selectTier('${t}')"
+        style="
+          flex: 0 0 calc(20% - 6px);
+          padding: 8px 0;
+          font-size: 13px;
+          min-height: 38px;
+        ">
+        ${t}档
+      </button>
+    `)
+  }
 
   app.innerHTML = `
     <div class="header">
@@ -50,19 +64,20 @@ function renderPackageContent(app, tiers) {
         </div>
       ` : ''}
 
+      <!-- 档位选择 -->
+      <div class="card" style="padding: 14px;">
+        <div style="font-size: 15px; font-weight: 600; margin-bottom: 10px;">
+          请选择您的档位 <span style="font-size: 12px; color: #999; font-weight: normal;">（1-30档）</span>
+        </div>
         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-          ${tiers.map(t => `
-            <button class="btn ${selectedTier === t.key ? 'btn-primary' : 'btn-outline'}"
-              onclick="selectTier('${t.key}')"
-              style="flex: 1; min-width: 72px; padding: 10px 6px; font-size: 14px;">
-              ${t.label}
-            </button>
-          `).join('')}
+          ${tierButtons.join('')}
         </div>
       </div>
 
       ${selectedTier && products.length > 0 ? `
-        <div style="font-size: 13px; color: #999; margin: 8px 0;">共 ${products.length} 个品规</div>
+        <div style="font-size: 13px; color: #999; margin: 8px 0;">
+          ${selectedTier}档 · 共 <strong style="color: var(--color-primary);">${activityGroups.length}</strong> 个活动
+        </div>
 
         ${groups.map(group => {
           const items = products.filter(p => p.品牌组 === group)
@@ -82,7 +97,9 @@ function renderPackageContent(app, tiers) {
                 font-weight: 600;
                 color: #333;
                 border-bottom: 1px solid #ddd;
-              ">${group.startsWith('组') ? '江苏中烟 · ' : ''}${escapeHtml(group)}</div>
+              ">
+                ${group.startsWith('组') ? '江苏中烟 · ' : ''}${escapeHtml(group)}
+              </div>
               <div style="padding: 8px 14px 12px;">
                 ${items.map(p => {
                   const isAct = p.类型 === '活动品规'
@@ -138,7 +155,7 @@ function renderPackageContent(app, tiers) {
       ` : selectedTier ? `
         <div class="empty-state">
           <div class="empty-state-icon">📦</div>
-          <p>该档位暂无可用品规</p>
+          <p>${selectedTier}档暂无可用活动</p>
         </div>
       ` : `
         <div class="empty-state">
@@ -154,9 +171,8 @@ function renderPackageContent(app, tiers) {
   `
 }
 
-window.selectTier = function(key) {
-  selectedTier = key
+window.selectTier = function(tier) {
+  selectedTier = String(tier)
   const app = document.getElementById('app')
-  const tiers = getTierRanges()
-  renderPackageContent(app, tiers)
+  renderPackageContent(app)
 }
